@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memorial Guide</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Georgia", "Times New Roman", serif;
+    background: #f7f5f2;
+    color: #3b2f1e;
+}
+.header {
+    text-align: center;
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    border-bottom: 1px solid #e5dfd2;
+}
+.hero {
+    text-align: center;
+    padding: 26px 16px 10px;
+}
+.photo-wrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: #e2ded7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.photo {
+    width: 176px;
+    height: 176px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.medal {
+    position: absolute;
+    right: -6px;
+    bottom: -6px;
+    width: 54px;
+    height: 54px;
+}
+.medal img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25));
+}
+.name {
+    margin-top: 18px;
+    font-size: 1.45rem;
+    letter-spacing: 1px;
+}
+.date {
+    margin-top: 6px;
+    font-size: 0.95rem;
+    opacity: 0.75;
+}
+.instruction {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    opacity: 0.75;
+}
+.lang-title {
+    margin-top: 16px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+.lang-buttons {
+    display: flex;
+    gap: 10px;
+    padding: 8px 18px 6px;
+}
+.lang-buttons button {
+    flex: 1;
+    padding: 10px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    border: 1px solid #d6c7a1;
+    background: #f2efe9;
+    cursor: pointer;
+}
+.lang-buttons button.active {
+    background: #6b5329;
+    color: #fff;
+    border-color: #6b5329;
+}
+.audio-player {
+    padding: 10px 18px 22px;
+}
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.play-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: none;
+    background: #6b5329;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.progress {
+    flex: 1;
+    height: 8px;
+    background: #ddd6c8;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+}
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #6b5329;
+}
+.seek {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+}
+.time {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    text-align: right;
+    margin-top: 4px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">MEMORIAL GUIDE</div>
+
+<div class="hero">
+    <div class="photo-wrapper">
+        <div class="photo">
+            <img src="images/hero12.jpg">
+        </div>
+        <div class="medal">
+            <img src="images/mvc.png">
+        </div>
+    </div>
+
+    <div class="name">Wg Cdr Allan Albert D'Costa</div>
+    <div class="date">Award Date:04 Dec 71 </div>
+
+    <div class="instruction">
+        Use the audio guide below to listen to the citation.
+    </div>
+
+    <div class="lang-title">
+        Select Language / भाषा चुनें
+    </div>
+</div>
+
+<div class="lang-buttons">
+    <button id="btn-en" onclick="loadAudio('en')">English</button>
+    <button id="btn-hi" onclick="loadAudio('hi')">हिंदी</button>
+</div>
+
+<div class="audio-player">
+    <div class="controls">
+        <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+        <div class="progress" onclick="seek(event)">
+            <div class="progress-bar" id="progressBar"></div>
+            <input type="range" class="seek" min="0" max="100"
+                   value="0" oninput="dragSeek(this.value)">
+        </div>
+    </div>
+    <div class="time" id="time">0:00 / 0:00</div>
+</div>
+
+<audio id="audio"></audio>
+
+<script>
+const HERO_ID = "hero12";
+
+const medalMap = {
+    PVC: "images/pvc.png",
+    MVC: "images/mvc.png",
+    AC:  "images/ac.png"
+};
+
+const audio = document.getElementById("audio");
+const progressBar = document.getElementById("progressBar");
+const time = document.getElementById("time");
+const playBtn = document.getElementById("playBtn");
+const btnEn = document.getElementById("btn-en");
+const btnHi = document.getElementById("btn-hi");
+
+function setActive(lang) {
+    btnEn.classList.toggle("active", lang === "en");
+    btnHi.classList.toggle("active", lang === "hi");
+}
+
+function loadAudio(lang) {
+    audio.src = `audio/${HERO_ID}-${lang}.mp3`;
+    audio.play();
+    playBtn.textContent = "❚❚";
+    setActive(lang);
+}
+
+function togglePlay() {
+    if (!audio.src) return;
+    if (audio.paused) {
+        audio.play();
+        playBtn.textContent = "❚❚";
+    } else {
+        audio.pause();
+        playBtn.textContent = "▶";
+    }
+}
+
+audio.addEventListener("ended", () => {
+    playBtn.textContent = "▶";
+});
+
+audio.addEventListener("timeupdate", () => {
+    if (!audio.duration) return;
+    const p = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = p + "%";
+    time.textContent =
+        Math.floor(audio.currentTime / 60) + ":" +
+        Math.floor(audio.currentTime % 60).toString().padStart(2,"0") +
+        " / " +
+        Math.floor(audio.duration / 60) + ":" +
+        Math.floor(audio.duration % 60).toString().padStart(2,"0");
+});
+
+function seek(e) {
+    const r = e.currentTarget.getBoundingClientRect();
+    audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+}
+
+function dragSeek(v) {
+    audio.currentTime = (v / 100) * audio.duration;
+}
+</script>
+
+</body>
+</html>
